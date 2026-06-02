@@ -1,0 +1,21 @@
+[package]
+name = "coverage-gap"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Topological coverage gap finder — Betti numbers for test blind spots"
+
+[[bin]]
+name = "coverage-gap"
+path = "src/bin/cli.rs"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+itertools = { workspace = true }
+regex = { workspace = true }
+rayon = { workspace = true }
+
+# For nearest-neighbor / clustering of coverage features
+ordered-float = { workspace = true }

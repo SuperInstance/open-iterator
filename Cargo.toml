@@ -20,7 +20,7 @@ name = "lapce-proxy"
 path = "lapce-proxy/src/bin/lapce-proxy.rs"
 
 [workspace]
-members = ["lapce-app", "lapce-proxy", "lapce-rpc", "lapce-core"]
+members = ["lapce-app", "lapce-proxy", "lapce-rpc", "lapce-core", "coverage-gap"]
 
 [workspace.package]
 version      = "0.4.6"
@@ -47,6 +47,7 @@ indexmap          = { version = "2.0", features = ["serde"] }
 interprocess      = { version = "1.2.1" }
 itertools         = { version = "0.12.1" }
 notify            = { version = "5.2.0", features = ["serde"] }
+ordered-float     = { version = "4" }
 once_cell         = { version = "1.19" }
 parking_lot       = { version = "0.12.3" }
 rayon             = { version = "1.10.0" }
