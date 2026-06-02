@@ -56,6 +56,27 @@ Or, join the discussion on [Reddit](https://www.reddit.com/r/lapce/) where we ar
 
 There is also a [Matrix Space](https://matrix.to/#/#lapce-editor:matrix.org), which is linked to the content from the Discord server.
 
+## 🏆 SuperInstance Enhancement: Coverage Gap Finder
+
+**Which 20% of your code is untested? And is it the important 20%?**
+
+[Coverage Gap Finder](coverage-gap/) brings **topological data analysis** directly into Lapce.
+It parses `llvm-cov` output, builds a simplicial complex from code features (branches, loops,
+match arms, generics, async, unsafe), and computes **Betti numbers** to surface blind spots
+that line coverage alone misses.
+
+> *Your tests cover 80% of lines. But the async error handling Betti number is 3 —
+> there are 3 untested error paths.*
+
+Same Lapce. Knows its own blind spots.
+
+```bash
+cargo llvm-cov --json > coverage.json
+cargo run --bin coverage-gap -- coverage.json
+```
+
+See [`coverage-gap/INTEGRATION.md`](coverage-gap/INTEGRATION.md) for full documentation.
+
 ## License
 
 Lapce is released under the Apache License Version 2, which is an open source license. You may contribute to this project, or use the code as you please as long as you adhere to its conditions. You can find a copy of the license text here: [`LICENSE`](LICENSE).
