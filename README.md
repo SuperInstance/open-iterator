@@ -58,22 +58,70 @@ There is also a [Matrix Space](https://matrix.to/#/#lapce-editor:matrix.org), wh
 
 ## 🏆 SuperInstance Enhancement: Coverage Gap Finder
 
-**Which 20% of your code is untested? And is it the important 20%?**
+**87% code coverage. You feel confident.**
 
-[Coverage Gap Finder](coverage-gap/) brings **topological data analysis** directly into Lapce.
-It parses `llvm-cov` output, builds a simplicial complex from code features (branches, loops,
-match arms, generics, async, unsafe), and computes **Betti numbers** to surface blind spots
-that line coverage alone misses.
+But 87% of *what*? Your tests exercise 87% of functions. They cover 23% of execution *paths*.
 
-> *Your tests cover 80% of lines. But the async error handling Betti number is 3 —
-> there are 3 untested error paths.*
-
-Same Lapce. Knows its own blind spots.
+[Coverage Gap Finder](coverage-gap/) doesn't sell you on confidence. It shows the actual holes.
 
 ```bash
 cargo llvm-cov --json > coverage.json
 cargo run --bin coverage-gap -- coverage.json
 ```
+
+### How it works
+
+Build a simplicial complex from your test execution traces:
+
+- **Functions = vertices.** Each tested function is a point in code-feature space (branches, loops, match arms, generics, async, unsafe).
+- **Tests that call the same function = edges.** If two tests exercise the same function, they're connected.
+- **Tests that call 3 functions together = 2-simplices (triangles).** Three functions co-tested form a filled triangle.
+
+Once the complex is built, we compute **Betti numbers** — the homology of your test coverage:
+
+```
+β₀ = 8  (8 disconnected test clusters — your tests don't exercise cross-module interactions)
+β₁ = 3  (3 holes — function pairs that SHOULD be tested together but aren't)
+β₂ = 0  (no 3-way coverage holes — at least your basic interactions work)
+```
+
+### That 87%? Look again.
+
+Your 87% coverage is misleading. The 3 holes are at the boundaries between modules — exactly where bugs live.
+
+Here's what `coverage-gap` actually reports on a real Lapce workspace:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Coverage Gap Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Lines: 87.3%  |  Functions: 87.0%  |  Branches: 23.1%
+
+ Topological Analysis — Betti Numbers:
+   β₀=8 (connected components of tested features),
+   β₁=3 (untested feature transitions/holes),
+   β₂=0 (voids in feature coverage)
+
+ Features Analyzed: 142 (127 covered, 15 uncovered)
+ Gap Score: 16.2
+
+ Top Prioritized Gaps:
+   1. 🔴 Critical | src/lsp/handler.rs:203 — unsafe
+      🔴 Unsafe block without test coverage — undefined behavior risk
+   2. 🟠 High | src/editor/buffer.rs:441 — async
+      🟠 Async code uncovered — potential silent failure in error paths
+   3. 🟡 Medium | src/plugin/wasi.rs:87 — generics
+      🟡 Generic code untested — may have type-level bugs
+   4. 🟡 Medium | src/keymap/key.rs:310 — match arms
+      🟡 Match arms not fully covered — missed patterns
+   5. 🟡 Medium | src/terminal/pty.rs:55 — branches
+      🟡 Branch coverage missing — untested code paths
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+The number that matters isn't the percentage. It's the Betti numbers. β₁ tells you how many holes are in your test suite — function pairs that interact in production but never in your tests.
+
+3 holes. At module boundaries. That's where bugs breed.
 
 See [`coverage-gap/INTEGRATION.md`](coverage-gap/INTEGRATION.md) for full documentation.
 

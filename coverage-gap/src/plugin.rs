@@ -213,7 +213,6 @@ pub fn find_coverage_json(workspace_root: &Path) -> Option<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     #[test]
     fn test_plugin_manifest() {
