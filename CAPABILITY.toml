@@ -1,0 +1,25 @@
+# CAPABILITY.toml — open-iterator
+# Lightning-fast code editor with agent-assisted coding capabilities.
+
+[capability]
+name = "open-iterator"
+version = "0.4.6"
+description = "Lightning-fast code editor written in Rust with agent-assisted coding, CAPABILITY.toml scanning, and spectral code ranking"
+
+[capability.capabilities]
+suggest_imports = "fn suggest_imports(context: &str, manifests: &[CapabilityManifest]) -> Vec<ImportSuggestion>"
+detect_conservation_violation = "fn detect_conservation_violation(code: &str, file: &str, tolerance: f64) -> Vec<ConservationViolation>"
+spectral_code_ranking = "fn spectral_code_ranking(files: &[(PathBuf, Vec<String>)]) -> Vec<RankedFile>"
+scan_workspace_capabilities = "fn scan_workspace_capabilities(root: &Path) -> Vec<CapabilityManifest>"
+parse_capability_toml = "fn parse_capability_toml(path: &Path) -> Result<CapabilityManifest, String>"
+
+[capability.exports]
+ConservationBudget = "struct { gamma: f64, eta: f64, capacity: f64 }"
+CapabilityManifest = "struct { name, version, description, capabilities, depends, source_path }"
+ImportSuggestion = "struct { import_path, reason, relevance, from_manifest }"
+RankedFile = "struct { path, importance, inbound_degree, outbound_degree }"
+
+[capability.integrations]
+open-terminal = "Terminal overlay for agent-assisted debugging sessions"
+open-parallel = "Spectral ranking feeds into parallel task scheduling"
+open-mind = "Capability discovery enables code analysis induction"
