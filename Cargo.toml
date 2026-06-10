@@ -1,4 +1,6 @@
 [package]
+description = "lapce - SuperInstance ecosystem crate"
+repository = "https://github.com/SuperInstance/lapce"
 name         = "lapce"
 version      = { workspace = true }
 authors      = { workspace = true }
